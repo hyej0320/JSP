@@ -74,10 +74,30 @@ public class CookieServlet extends HttpServlet{
 			}
 			// 이 서블릿의 list 커맨드로 다시 요청해달라고 응답
 			resp.sendRedirect("/chap04/cookie/ex/list");
+		} else if (cmd.equals("modify")) {
+			String to_modi = req.getParameter("to_modi");
+			String modi_value = req.getParameter("modi_value");
+			
+			System.out.println("바꿔야하는 쿠키 이름: " + to_modi);
+			System.out.println("바꾸고 싶은 값: " + modi_value);
+			
+			// 쿠키 값을 수정하고 싶으면 해당 쿠키를 꺼내서 setValue()로 값을 바꾼 후 응답에 다시 실어놓으면 된다
+			Cookie[] cookies = req.getCookies();
+			
+			if (cookies != null) {
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(to_modi)) {
+						cookie.setValue(modi_value);
+						cookie.setPath("/chap04/cookie/");
+						resp.addCookie(cookie);
+						break;
+					}
+				}
+			}
+			resp.sendRedirect("/chap04/cookie/ex/list");
 		} else {
 			// URI가 원하는 cmd가 아닐 때 그냥 메인으로 redirect
 			resp.sendRedirect("/chap04/cookie/cookie_index.jsp");
-			
 		}
 	}
 }

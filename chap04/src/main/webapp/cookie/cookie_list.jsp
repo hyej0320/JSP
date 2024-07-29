@@ -15,12 +15,13 @@
 		<% for (Cookie cookie : (Cookie[])(request.getAttribute("cookies"))) { %>
 			<li>
 			<% String cookieName = cookie.getName(); %>
-			<%=cookie.getName() %>=<%=cookie.getValue() %>
-			<form class = "modi_form" action="./modify" method="GET">
+			<%=cookieName%>=<%=cookie.getValue() %>
+			<form class="modi_form" action="./modify" method="GET">
 			  <input type="hidden" name="to_modi" value=<%=cookieName%> />
-			  [<input type="text" name="modi_value" /> <button id="modi_btn">값 수정</button>]
+			  [<input type="text" name="modi_value" /> 
+			  <button id="modi_btn">값 수정</button>]
 			</form> 
-			[<a href="./delete?cookie-name=<%=cookie.getName()%>">삭제</a>] </li>
+			[<a href="./delete?cookie-name=<%=cookieName%>">삭제</a>] </li>
 		<% } %>
 	</ul>
 	
