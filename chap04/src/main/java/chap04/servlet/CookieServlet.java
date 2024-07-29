@@ -50,6 +50,30 @@ public class CookieServlet extends HttpServlet{
 			resp.addCookie(cookie2);
 			resp.addCookie(cookie3);
 			resp.sendRedirect("/chap04/cookie/cookie_index.jsp");
+		} else if (cmd.equals("delete")) {
+			// 이미 존재하는 쿠키를 삭제할 때는 요청에 실려있는 쿠키의 수명을 0으로 수정한 후에
+			// 응답에 실어서 보내주면 된다
+			Cookie[] cookies = req.getCookies();
+			
+			if (cookies != null) {
+				String to_delete = req.getParameter("cookie-name");
+				
+				System.out.println("내가 지워야하는 쿠키 이름: " + to_delete);
+				for (Cookie cookie : cookies) {
+					if (cookie.getName().equals(to_delete)) {
+						// 해당 이름의 쿠키를 수명 0으로 만드록 응답에 실어 삭제
+						cookie.setMaxAge(0);
+						// 이름만 맞다고 삭제되는 것이 아니라 경로까지 맞아야
+						// 해당 쿠키를 정확하게 지칭하는 것이 된다
+						cookie.setPath("/chap04/cookie/");
+						resp.addCookie(cookie);
+						break;
+					}
+				}
+				
+			}
+			// 이 서블릿의 list 커맨드로 다시 요청해달라고 응답
+			resp.sendRedirect("/chap04/cookie/ex/list");
 		} else {
 			// URI가 원하는 cmd가 아닐 때 그냥 메인으로 redirect
 			resp.sendRedirect("/chap04/cookie/cookie_index.jsp");
