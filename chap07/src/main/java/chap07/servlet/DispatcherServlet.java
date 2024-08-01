@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import chap07.web.WebProcess;
+import chap07.webprocess.ExpressionLanguageSampleProcess;
 import chap07.webprocess.JstlIndexProcess;
+import chap07.webprocess.NotFoundProcess;
 
 
 public class DispatcherServlet extends HttpServlet{
@@ -21,18 +23,20 @@ public class DispatcherServlet extends HttpServlet{
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		URI_MAPPING.put(
-				String.format("GET:%s/jstl", config.getServletContext().getContextPath()), 
-				new JstlIndexProcess());
+		URI_MAPPING.put("GET:/jstl", new JstlIndexProcess());
+		URI_MAPPING.put("GET:/jstl/el", new ExpressionLanguageSampleProcess());
+		URI_MAPPING.put("GET:/notfound", new NotFoundProcess());
 	}
 	
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String contextPath = req.getContextPath();
+		
 		String method = req.getMethod();
-		String uri = req.getRequestURI();
+		String uri = req.getRequestURI().substring(contextPath.length());
 		
 		System.out.println("요청방식: " + method);
-		System.out.println("요청URI: " + uri);
+		System.out.println("ContextPath가 짤린 요청URI: " + uri);
 		
 		WebProcess wp = URI_MAPPING.get(method + ":" + uri);
 		
@@ -41,7 +45,7 @@ public class DispatcherServlet extends HttpServlet{
 		if (wp != null) {
 			nextView = wp.process(req, resp);
 		} else {
-			resp.sendRedirect(req.getContextPath() + "/hello");
+			resp.sendRedirect(req.getContextPath() + "/notfound");
 			return;
 		}
 		
